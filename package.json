@@ -1,0 +1,28 @@
+{
+    "private": true,
+    "name": "@locomotivemtl/boilerplate",
+    "title": "Locomotive Boilerplate",
+    "version": "1.0.0",
+    "author": "Locomotive <info@locomotive.ca>",
+    "dependencies": {
+        "gsap": "^3.0.5",
+        "locomotive-scroll": "*",
+        "modujs": "*",
+        "modularload": "*",
+        "normalize.css": "*",
+        "svg4everybody": "*"
+    },
+    "devDependencies": {
+        "@modularbp/gulp": "^1.0.5",
+        "@modularbp/gulp-build": "^1.0.1",
+        "@modularbp/gulp-error": "^1.0.3",
+        "@modularbp/gulp-js": "^1.0.8",
+        "@modularbp/gulp-notify": "^1.0.3",
+        "@modularbp/gulp-sass": "^1.0.7",
+        "@modularbp/gulp-serve": "^1.0.5",
+        "@modularbp/gulp-svg": "^1.0.5",
+        "@modularbp/gulp-watch": "^1.0.5",
+        "gulp-concat": "*",
+        "mbp": "^1.1.3"
+    }
+}
