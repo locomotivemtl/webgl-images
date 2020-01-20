@@ -3194,8 +3194,7 @@
     }, {
       key: "updateSize",
       value: function updateSize() {
-        this.camUnit = this.calculateUnitSize(this.camera.position.z);
-        console.log(this.camUnit.width); // Set size @update
+        this.camUnit = this.calculateUnitSize(this.camera.position.z); // Set size @update
 
         this.planeBCR.width = this.camUnit.width - this.camUnit.width * (this.gap / 100);
         this.planeBCR.height = this.planeBCR.width / this.camera.aspect;
@@ -3242,7 +3241,7 @@
       value: function scroll() {
         var newBCR = this.el.getBoundingClientRect();
         if (this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return;
-        this.BCR = newBCR; // console.log(this.BCR);
+        this.BCR = newBCR;
       }
     }, {
       key: "destroy",

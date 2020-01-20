@@ -162,7 +162,6 @@ export default class extends module {
 
     updateSize() {
         this.camUnit = this.calculateUnitSize(this.camera.position.z);
-        console.log(this.camUnit.width);
 
         // Set size @update
         this.planeBCR.width = this.camUnit.width - (this.camUnit.width * (this.gap / 100));
@@ -210,7 +209,6 @@ export default class extends module {
         if(this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return
         this.BCR = newBCR;
 
-        // console.log(this.BCR);
     }
 
     destroy() {
