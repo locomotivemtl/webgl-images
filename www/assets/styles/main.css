@@ -778,10 +778,29 @@ a {
   min-height: 12.5rem; }
 
 .c-distortion {
-  width: 500px;
-  height: 390px;
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  font-size: 1rem;
+  padding-left: 0;
+  position: relative;
   margin: 0;
   display: inline-block; }
+  .c-distortion::before {
+    content: "";
+    display: block;
+    padding-bottom: 78%; }
+  .c-distortion canvas {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0; }
+  @media (min-width: 1000px) {
+    .c-distortion {
+      width: 50%; } }
+  .c-distortion.is-loading {
+    background-color: rgba(0, 0, 0, 0.2); }
 
 /* stylelint-disable */
 .u-2\:1::before {

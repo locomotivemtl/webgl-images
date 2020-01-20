@@ -1,6 +1,30 @@
 .c-distortion {
-    width: 500px;
-    height: 390px;
+    // width: 500px;
+    // height: 390px;
+    @include o-layout-item;
+    position: relative;
     margin: 0;
     display: inline-block;
+
+    &::before {
+        content:"";
+        display: block;
+        padding-bottom: 78%;
+    }
+
+    canvas {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+    }
+
+    @media (min-width: $from-medium) {
+        width: span(1/2);
+    }
+
+    &.is-loading {
+        background-color: rgba(0,0,0,0.2);
+    }
 }

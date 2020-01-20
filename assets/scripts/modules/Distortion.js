@@ -4,6 +4,9 @@ import { lerp } from '../utils/maths'
 import vertexShader from '../shaders/distortionVertex';
 import fragmentShader from '../shaders/distortionFragment';
 
+const CLASS = {
+    LOADING: 'is-loading'
+}
 
 export default class extends module {
     constructor(m) {
@@ -11,6 +14,7 @@ export default class extends module {
 
         this.textureSrc = this.getData('texture');
         this.displacementSrc = this.getData('displacement');
+        this.gap = this.getData('gap');
 
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
@@ -21,13 +25,12 @@ export default class extends module {
             mousemove: 'mousemove'
         }
 
-        // optional / specific
+        this.el.classList.add(CLASS.LOADING);
 
     }
 
     init() {
 
-        this.BCR = this.el.getBoundingClientRect();
         this.planeBCR = {
             width: 1,
             height: 1,
@@ -40,9 +43,11 @@ export default class extends module {
         this.inView = true;
         this.isLoaded = false;
 
-        this.renderer = new THREE.WebGLRenderer( { canvas: this.$canvas[0], antialias: false, alpha: true } );
+        this.BCR = this.el.getBoundingClientRect();
+
+        this.renderer = new THREE.WebGLRenderer( { canvas: this.$canvas[0], antialias: true, alpha: true } );
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,1));
-        this.renderer.setSize( this.BCR.width, this.BCR.height );
+        this.renderer.setSize(this.BCR.width,this.BCR.height);
 
         this.initScene();
         this.initCamera();
@@ -55,18 +60,20 @@ export default class extends module {
             offset: 0.0
         }
 
-
-        this.displacementPosition = new THREE.Vector2(0,1.0);
-        this.mouse = new THREE.Vector2(0,0);
+        this.displacementPosition = new THREE.Vector2(-1,-1);
+        this.mouse = new THREE.Vector2(-1,-1);
 
         // this.tl.to(this.displacementPosition,2,{
-        //     x:0.0,
-        //     y:-1.0,
-        // });
-        // this.tl.to(this.displacementPosition,2,{
-        //     x:0.0,
+        //     x:1.0,
         //     y:1.0,
         // });
+        // this.tl.to(this.displacementPosition,2,{
+        //     x:-1.0,
+        //     y:-1.0,
+        // });
+
+        this.scrollBind = this.scroll.bind(this);
+        document.addEventListener('scroll', this.scrollBind);
 
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
@@ -129,10 +136,13 @@ export default class extends module {
                 });
 
                 this.plane = new THREE.Mesh(this.planeGeometry, this.planeMaterial);
+                this.BCR = this.el.getBoundingClientRect();
                 this.updateSize();
 
                 this.scene.add(this.plane);
                 this.isLoaded = true;
+                this.el.classList.remove(CLASS.LOADING);
+
                 this.render();
             });
         });
@@ -152,18 +162,18 @@ export default class extends module {
 
     updateSize() {
         this.camUnit = this.calculateUnitSize(this.camera.position.z);
+        console.log(this.camUnit.width);
 
-        // Set size
-        this.planeBCR.width = this.camUnit.width - 5;
+        // Set size @update
+        this.planeBCR.width = this.camUnit.width - (this.camUnit.width * (this.gap / 100));
         this.planeBCR.height = this.planeBCR.width / this.camera.aspect;
 
         this.plane.geometry = new THREE.PlaneBufferGeometry(this.planeBCR.width, this.planeBCR.height, 100, 100 );
     }
 
     mousemove(e) {
-        this.mouse.x = (-(e.clientX - this.BCR.left) / this.BCR.width) + 0.5;
-        this.mouse.y = ((e.clientY - this.BCR.top) / this.BCR.height) - 0.5;
-
+        this.mouse.x = (-(e.clientX - this.BCR.x) / this.BCR.width) + 0.5;
+        this.mouse.y = ((e.clientY - this.BCR.y) / this.BCR.height) - 0.5;
     }
 
     render() {
@@ -171,13 +181,10 @@ export default class extends module {
 
         if(this.isLoaded) {
 
-            // this.planeMaterial.uniforms["uvTransform"].value.setUvTransform(this.displacementPosition.x,this.displacementPosition.y,1,1,0,0,0);
-
             this.displacementPosition.x = lerp(this.displacementPosition.x,this.mouse.x,0.1);
             this.displacementPosition.y = lerp(this.displacementPosition.y,this.mouse.y,0.1);
 
             this.planeMaterial.uniforms["displacement"].value = this.displacementPosition;
-
         }
 
         this.renderer.render(this.scene,this.camera);
@@ -185,7 +192,7 @@ export default class extends module {
 
     resize() {
         const newBCR = this.el.getBoundingClientRect()
-        if(this.BCR && this.BCR.width == newBCR.width && this.BCR.height == newBCR.height) return
+        if(this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return
         this.BCR = newBCR
 
         this.camera.aspect = this.BCR.width / this.BCR.height;
@@ -198,9 +205,18 @@ export default class extends module {
         this.updateSize();
     }
 
+    scroll() {
+        const newBCR = this.el.getBoundingClientRect()
+        if(this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return
+        this.BCR = newBCR;
+
+        // console.log(this.BCR);
+    }
+
     destroy() {
         super.destroy();
         cancelAnimationFrame(this.raf);
         window.removeEventListener('resize', this.resizeBind);
+        document.removeEventListener('scroll', this.scrollBind);
     }
 }

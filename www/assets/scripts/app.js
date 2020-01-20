@@ -3031,6 +3031,10 @@
 
   var fragmentShader = "\n\n    uniform sampler2D texture;\n    varying vec2 vUv;\n\n    void main() {\n\n      gl_FragColor = texture2D(texture, vUv);\n      // gl_FragColor = vec4(1.0, 0, 0, 1.); // Works; Displays Flat Color\n\n    }\n";
 
+  var CLASS = {
+    LOADING: 'is-loading'
+  };
+
   var _default$6 =
   /*#__PURE__*/
   function (_module) {
@@ -3044,12 +3048,15 @@
       _this = _possibleConstructorReturn(this, _getPrototypeOf(_default).call(this, m));
       _this.textureSrc = _this.getData('texture');
       _this.displacementSrc = _this.getData('displacement');
+      _this.gap = _this.getData('gap');
       _this.windowWidth = window.innerWidth;
       _this.windowHeight = window.innerHeight;
       _this.$canvas = _this.$('canvas');
       _this.events = {
         mousemove: 'mousemove'
-      }; // optional / specific
+      };
+
+      _this.el.classList.add(CLASS.LOADING);
 
       return _this;
     }
@@ -3057,7 +3064,6 @@
     _createClass$1(_default, [{
       key: "init",
       value: function init() {
-        this.BCR = this.el.getBoundingClientRect();
         this.planeBCR = {
           width: 1,
           height: 1,
@@ -3070,9 +3076,10 @@
         });
         this.inView = true;
         this.isLoaded = false;
+        this.BCR = this.el.getBoundingClientRect();
         this.renderer = new THREE.WebGLRenderer({
           canvas: this.$canvas[0],
-          antialias: false,
+          antialias: true,
           alpha: true
         });
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
@@ -3086,16 +3093,18 @@
           scale: 1,
           offset: 0.0
         };
-        this.displacementPosition = new THREE.Vector2(0, 1.0);
-        this.mouse = new THREE.Vector2(0, 0); // this.tl.to(this.displacementPosition,2,{
-        //     x:0.0,
-        //     y:-1.0,
-        // });
-        // this.tl.to(this.displacementPosition,2,{
-        //     x:0.0,
+        this.displacementPosition = new THREE.Vector2(-1, -1);
+        this.mouse = new THREE.Vector2(-1, -1); // this.tl.to(this.displacementPosition,2,{
+        //     x:1.0,
         //     y:1.0,
         // });
+        // this.tl.to(this.displacementPosition,2,{
+        //     x:-1.0,
+        //     y:-1.0,
+        // });
 
+        this.scrollBind = this.scroll.bind(this);
+        document.addEventListener('scroll', this.scrollBind);
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
       }
@@ -3157,12 +3166,15 @@
               }
             });
             _this2.plane = new THREE.Mesh(_this2.planeGeometry, _this2.planeMaterial);
+            _this2.BCR = _this2.el.getBoundingClientRect();
 
             _this2.updateSize();
 
             _this2.scene.add(_this2.plane);
 
             _this2.isLoaded = true;
+
+            _this2.el.classList.remove(CLASS.LOADING);
 
             _this2.render();
           });
@@ -3182,17 +3194,18 @@
     }, {
       key: "updateSize",
       value: function updateSize() {
-        this.camUnit = this.calculateUnitSize(this.camera.position.z); // Set size
+        this.camUnit = this.calculateUnitSize(this.camera.position.z);
+        console.log(this.camUnit.width); // Set size @update
 
-        this.planeBCR.width = this.camUnit.width - 5;
+        this.planeBCR.width = this.camUnit.width - this.camUnit.width * (this.gap / 100);
         this.planeBCR.height = this.planeBCR.width / this.camera.aspect;
         this.plane.geometry = new THREE.PlaneBufferGeometry(this.planeBCR.width, this.planeBCR.height, 100, 100);
       }
     }, {
       key: "mousemove",
       value: function mousemove(e) {
-        this.mouse.x = -(e.clientX - this.BCR.left) / this.BCR.width + 0.5;
-        this.mouse.y = (e.clientY - this.BCR.top) / this.BCR.height - 0.5;
+        this.mouse.x = -(e.clientX - this.BCR.x) / this.BCR.width + 0.5;
+        this.mouse.y = (e.clientY - this.BCR.y) / this.BCR.height - 0.5;
       }
     }, {
       key: "render",
@@ -3204,7 +3217,6 @@
         });
 
         if (this.isLoaded) {
-          // this.planeMaterial.uniforms["uvTransform"].value.setUvTransform(this.displacementPosition.x,this.displacementPosition.y,1,1,0,0,0);
           this.displacementPosition.x = lerp$1(this.displacementPosition.x, this.mouse.x, 0.1);
           this.displacementPosition.y = lerp$1(this.displacementPosition.y, this.mouse.y, 0.1);
           this.planeMaterial.uniforms["displacement"].value = this.displacementPosition;
@@ -3216,7 +3228,7 @@
       key: "resize",
       value: function resize() {
         var newBCR = this.el.getBoundingClientRect();
-        if (this.BCR && this.BCR.width == newBCR.width && this.BCR.height == newBCR.height) return;
+        if (this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return;
         this.BCR = newBCR;
         this.camera.aspect = this.BCR.width / this.BCR.height;
         this.camera.updateProjectionMatrix();
@@ -3226,12 +3238,20 @@
         this.updateSize();
       }
     }, {
+      key: "scroll",
+      value: function scroll() {
+        var newBCR = this.el.getBoundingClientRect();
+        if (this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return;
+        this.BCR = newBCR; // console.log(this.BCR);
+      }
+    }, {
       key: "destroy",
       value: function destroy() {
         _get(_getPrototypeOf(_default.prototype), "destroy", this).call(this);
 
         cancelAnimationFrame(this.raf);
         window.removeEventListener('resize', this.resizeBind);
+        document.removeEventListener('scroll', this.scrollBind);
       }
     }]);
 
