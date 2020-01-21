@@ -1,10 +1,3 @@
-<p align="center">
-    <a href="https://github.com/locomotivemtl/locomotive-boilerplate">
-        <img src="https://user-images.githubusercontent.com/4596862/54868065-c2aea200-4d5e-11e9-9ce3-e0013c15f48c.png" height="140">
-    </a>
-</p>
-<h1 align="center">Locomotive Distortion Example</h1>
-<p align="center">Front-end images rendered with webgl for distortion effect</p>
 
 ## Description
 Simple examples to implement easily images rendered with webgl. You just need to create a canvas, set its width and height with css, and the images will get the same dimensions
