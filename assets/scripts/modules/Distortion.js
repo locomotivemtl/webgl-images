@@ -22,7 +22,9 @@ export default class extends module {
         this.$canvas = this.$('canvas');
 
         this.events = {
-            mousemove: 'mousemove'
+            mousemove: 'mousemove',
+            mouseenter: 'mouseenter',
+            mouseleave: 'mouseleave'
         }
 
         this.el.classList.add(CLASS.LOADING);
@@ -55,9 +57,9 @@ export default class extends module {
         this.initShape();
 
         this.values = {
-            factor: this.getData('factor'),
-            scale: 1,
-            offset: 0.0
+            factor: 0,
+            factorAim: this.getData('factor'),
+            scale: 1
         }
 
         this.displacementPosition = new THREE.Vector2(-1,-1);
@@ -170,6 +172,22 @@ export default class extends module {
         this.plane.geometry = new THREE.PlaneBufferGeometry(this.planeBCR.width, this.planeBCR.height, 100, 100 );
     }
 
+    mouseenter(e) {
+
+        this.mouse.x = this.displacementPosition.x = (-(e.clientX - this.BCR.x) / this.BCR.width) + 0.5;
+        this.mouse.y = this.displacementPosition.y = ((e.clientY - this.BCR.y) / this.BCR.height) - 0.5;
+
+        TweenMax.to(this.values,0.6,{
+            factor: this.values.factorAim
+        });
+    }
+
+    mouseleave(e) {
+        TweenMax.to(this.values,0.6,{
+            factor: 0
+        });
+    }
+
     mousemove(e) {
         this.mouse.x = (-(e.clientX - this.BCR.x) / this.BCR.width) + 0.5;
         this.mouse.y = ((e.clientY - this.BCR.y) / this.BCR.height) - 0.5;
@@ -184,6 +202,7 @@ export default class extends module {
             this.displacementPosition.y = lerp(this.displacementPosition.y,this.mouse.y,0.1);
 
             this.planeMaterial.uniforms["displacement"].value = this.displacementPosition;
+            this.planeMaterial.uniforms["factor"].value = this.values.factor;
         }
 
         this.renderer.render(this.scene,this.camera);

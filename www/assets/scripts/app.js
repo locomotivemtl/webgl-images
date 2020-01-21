@@ -3053,7 +3053,9 @@
       _this.windowHeight = window.innerHeight;
       _this.$canvas = _this.$('canvas');
       _this.events = {
-        mousemove: 'mousemove'
+        mousemove: 'mousemove',
+        mouseenter: 'mouseenter',
+        mouseleave: 'mouseleave'
       };
 
       _this.el.classList.add(CLASS.LOADING);
@@ -3089,9 +3091,9 @@
         this.initLights();
         this.initShape();
         this.values = {
-          factor: this.getData('factor'),
-          scale: 1,
-          offset: 0.0
+          factor: 0,
+          factorAim: this.getData('factor'),
+          scale: 1
         };
         this.displacementPosition = new THREE.Vector2(-1, -1);
         this.mouse = new THREE.Vector2(-1, -1); // this.tl.to(this.displacementPosition,2,{
@@ -3201,6 +3203,22 @@
         this.plane.geometry = new THREE.PlaneBufferGeometry(this.planeBCR.width, this.planeBCR.height, 100, 100);
       }
     }, {
+      key: "mouseenter",
+      value: function mouseenter(e) {
+        this.mouse.x = this.displacementPosition.x = -(e.clientX - this.BCR.x) / this.BCR.width + 0.5;
+        this.mouse.y = this.displacementPosition.y = (e.clientY - this.BCR.y) / this.BCR.height - 0.5;
+        TweenMax.to(this.values, 0.6, {
+          factor: this.values.factorAim
+        });
+      }
+    }, {
+      key: "mouseleave",
+      value: function mouseleave(e) {
+        TweenMax.to(this.values, 0.6, {
+          factor: 0
+        });
+      }
+    }, {
       key: "mousemove",
       value: function mousemove(e) {
         this.mouse.x = -(e.clientX - this.BCR.x) / this.BCR.width + 0.5;
@@ -3219,6 +3237,7 @@
           this.displacementPosition.x = lerp$1(this.displacementPosition.x, this.mouse.x, 0.1);
           this.displacementPosition.y = lerp$1(this.displacementPosition.y, this.mouse.y, 0.1);
           this.planeMaterial.uniforms["displacement"].value = this.displacementPosition;
+          this.planeMaterial.uniforms["factor"].value = this.values.factor;
         }
 
         this.renderer.render(this.scene, this.camera);
