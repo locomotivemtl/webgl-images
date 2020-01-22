@@ -174,8 +174,8 @@ export default class extends module {
 
     mouseenter(e) {
 
-        this.mouse.x = this.displacementPosition.x = (-(e.clientX - this.BCR.x) / this.BCR.width) + 0.5;
-        this.mouse.y = this.displacementPosition.y = ((e.clientY - this.BCR.y) / this.BCR.height) - 0.5;
+        this.mouse.x = this.displacementPosition.x = (-(e.clientX - this.BCR.left) / this.BCR.width) + 0.5;
+        this.mouse.y = this.displacementPosition.y = ((e.clientY - this.BCR.top) / this.BCR.height) - 0.5;
 
         TweenMax.to(this.values,0.6,{
             factor: this.values.factorAim
@@ -189,8 +189,8 @@ export default class extends module {
     }
 
     mousemove(e) {
-        this.mouse.x = (-(e.clientX - this.BCR.x) / this.BCR.width) + 0.5;
-        this.mouse.y = ((e.clientY - this.BCR.y) / this.BCR.height) - 0.5;
+        this.mouse.x = (-(e.clientX - this.BCR.left) / this.BCR.width) + 0.5;
+        this.mouse.y = ((e.clientY - this.BCR.top) / this.BCR.height) - 0.5;
     }
 
     render() {
@@ -210,7 +210,7 @@ export default class extends module {
 
     resize() {
         const newBCR = this.el.getBoundingClientRect()
-        if(this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return
+        if(this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return
         this.BCR = newBCR
 
         this.camera.aspect = this.BCR.width / this.BCR.height;
@@ -225,7 +225,7 @@ export default class extends module {
 
     scroll() {
         const newBCR = this.el.getBoundingClientRect()
-        if(this.BCR && this.BCR.y == newBCR.y && this.BCR.height == newBCR.height) return
+        if(this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return
         this.BCR = newBCR;
 
     }
