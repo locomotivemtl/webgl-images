@@ -25,6 +25,19 @@ npm i
     }
 ```
 
+## Examples
+### Radial displacement texture
+![](www/assets/radial-displacement.jpg)
+
+### Axis
+![](docs/axis.jpg)
+
+### Displacement Position 0,0
+![](docs/positionExample.jpg)
+
+
+
+
 ## Options
 
 | Attribute | Values | Description |
