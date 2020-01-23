@@ -22,9 +22,9 @@ export default class extends module {
         this.$canvas = this.$('canvas');
 
         this.events = {
-            mousemove: 'mousemove',
-            mouseenter: 'mouseenter',
-            mouseleave: 'mouseleave'
+            // mousemove: 'mousemove',
+            // mouseenter: 'mouseenter',
+            // mouseleave: 'mouseleave'
         }
 
         // El and webgl plane BCR
@@ -64,6 +64,19 @@ export default class extends module {
         this.initCamera();
         this.initLights();
         this.initShape();
+
+        // automatic
+        this.isRenderable = true;
+        this.tl = new TimelineMax({repeat: -1});
+        this.values.factor = this.values.factorAim;
+        this.tl.to(this.displacementPosition,2,{
+            x:1.5,
+            y:1.5,
+        });
+        this.tl.to(this.displacementPosition,2,{
+            x:-0.5,
+            y:-0.5,
+        });
 
         this.scrollBind = this.scroll.bind(this);
         document.addEventListener('scroll', this.scrollBind);
@@ -120,7 +133,7 @@ export default class extends module {
                             value: uvTransform
                         },
                         "factor" : {
-                            value: 0
+                            value: 1.0
                         }
                     },
                     defines: {
