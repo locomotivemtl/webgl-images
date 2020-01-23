@@ -1,6 +1,7 @@
 export default `
     uniform sampler2D displacementTexture;
     uniform float factor;
+    uniform float scale;
     uniform vec2 displacement;
     varying vec2 displacementUv;
     varying vec2 vUv;

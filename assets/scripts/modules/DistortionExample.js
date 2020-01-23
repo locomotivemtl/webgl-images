@@ -36,10 +36,10 @@ export default class extends module {
         this.isRenderable = false;
 
         // Positions
-        this.displacementPosition = new THREE.Vector2(-0.5,-0.5);
-        this.mouse = new THREE.Vector2(-0.5,-0.5);
+        this.displacementPosition = new THREE.Vector2(0,0);
+        this.mouse = new THREE.Vector2(0,0);
 
-        this.values = {
+        this.settings = {
             factor: 0,
             factorAim: this.getData('factor'),
             scale: 1
@@ -61,15 +61,20 @@ export default class extends module {
 
         // automatic
         this.isRenderable = true;
-        this.tl = new TimelineMax({repeat: -1});
-        this.values.factor = this.values.factorAim;
-        this.tl.to(this.displacementPosition,2,{
-            x:1.5,
-            y:1.5,
+        this.tl = new TimelineMax({
+            repeat: -1,
+            onUpdate: () => {
+                this.call('updateProgress',this.tl.progress(),'Gui');
+            }
         });
-        this.tl.to(this.displacementPosition,2,{
-            x:-0.5,
-            y:-0.5,
+        this.settings.factor = this.settings.factorAim;
+        this.tl.to(this.displacementPosition,1,{
+            x:1,
+            y:1,
+        });
+        this.tl.to(this.displacementPosition,1,{
+            x:0,
+            y:0,
         });
 
         this.scrollBind = this.scroll.bind(this);
@@ -77,8 +82,6 @@ export default class extends module {
 
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
-
-        this.gui();
 
     }
 
@@ -179,13 +182,13 @@ export default class extends module {
             y: (e.clientY - this.BCR.top) / this.BCR.height
         });
 
-        TweenMax.to(this.values,0.6,{
-            factor: this.values.factorAim
+        TweenMax.to(this.settings,0.6,{
+            factor: this.settings.factorAim
         });
     }
 
     mouseleave(e) {
-        TweenMax.to(this.values,0.6,{
+        TweenMax.to(this.settings,0.6,{
             factor: 0,
             onComplete: () => {
                 this.isRenderable = false;
@@ -210,7 +213,7 @@ export default class extends module {
 
         if(this.isLoaded && this.isRenderable) {
             this.planeMaterial.uniforms["displacement"].value = this.formatPosition(this.displacementPosition);
-            this.planeMaterial.uniforms["factor"].value = this.values.factor;
+            this.planeMaterial.uniforms["factor"].value = this.settings.factor;
         }
 
         this.renderer.render(this.scene,this.camera);
@@ -231,14 +234,25 @@ export default class extends module {
         this.updateSize();
     }
 
+    updateFactor(factor) {
+        this.settings.factor = factor;
+    }
+    updateProgress(progress) {
+        this.tl.progress(progress);
+    }
+
+    updatePlay(value) {
+        if(value) {
+            this.tl.play();
+        } else {
+            this.tl.pause();
+        }
+    }
+
     scroll() {
         const newBCR = this.el.getBoundingClientRect()
         if(this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return
         this.BCR = newBCR;
-
-    }
-
-    gui() {
 
     }
 

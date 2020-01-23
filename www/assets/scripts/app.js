@@ -3023,7 +3023,7 @@
     return _default;
   }(_default);
 
-  var vertexShader = "\n    uniform sampler2D displacementTexture;\n    uniform float factor;\n    uniform vec2 displacement;\n    varying vec2 displacementUv;\n    varying vec2 vUv;\n\n    #include <common>\n    #include <uv_pars_vertex>\n\n    void main() {\n        #include <uv_vertex>\n\n        displacementUv = uv + displacement;\n        vUv = uv;\n\n        vec3 newPosition = vec3(position.x, position.y , position.z + (texture2D(displacementTexture, displacementUv).r * factor));\n\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.);\n\n        // gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );;\n    }\n";
+  var vertexShader = "\n    uniform sampler2D displacementTexture;\n    uniform float factor;\n    uniform float scale;\n    uniform vec2 displacement;\n    varying vec2 displacementUv;\n    varying vec2 vUv;\n\n    #include <common>\n    #include <uv_pars_vertex>\n\n    void main() {\n        #include <uv_vertex>\n\n        displacementUv = uv + displacement;\n        vUv = uv;\n\n        vec3 newPosition = vec3(position.x, position.y , position.z + (texture2D(displacementTexture, displacementUv).r * factor));\n\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.);\n\n        // gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );;\n    }\n";
 
   var fragmentShader = "\n\n    uniform sampler2D texture;\n    varying vec2 vUv;\n\n    void main() {\n\n      gl_FragColor = texture2D(texture, vUv);\n      // gl_FragColor = vec4(1.0, 0, 0, 1.); // Works; Displays Flat Color\n\n    }\n";
 
@@ -3071,10 +3071,10 @@
 
       _this.displacementPosition = new THREE.Vector2(-0.5, -0.5);
       _this.mouse = new THREE.Vector2(-0.5, -0.5);
-      _this.values = {
+      _this.settings = {
         factor: 0,
         factorAim: _this.getData('factor'),
-        scale: 1
+        scale: 0
       };
       return _this;
     }
@@ -3098,6 +3098,15 @@
         document.addEventListener('scroll', this.scrollBind);
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
+        this.tl = new TimelineMax({
+          repeat: -1
+        });
+        this.tl.to(this.settings, 1, {
+          scale: -100
+        });
+        this.tl.to(this.settings, 1, {
+          scale: 0
+        });
       }
     }, {
       key: "initScene",
@@ -3149,7 +3158,10 @@
                   value: uvTransform
                 },
                 "factor": {
-                  value: 0
+                  value: _this2.settings.factor
+                },
+                "scale": {
+                  value: _this2.settings.scale
                 }
               },
               defines: {
@@ -3199,8 +3211,8 @@
           x: (e.clientX - this.BCR.left) / this.BCR.width,
           y: (e.clientY - this.BCR.top) / this.BCR.height
         });
-        TweenMax.to(this.values, 0.6, {
-          factor: this.values.factorAim
+        TweenMax.to(this.settings, 0.6, {
+          factor: this.settings.factorAim
         });
       }
     }, {
@@ -3208,7 +3220,7 @@
       value: function mouseleave(e) {
         var _this3 = this;
 
-        TweenMax.to(this.values, 0.6, {
+        TweenMax.to(this.settings, 0.6, {
           factor: 0,
           onComplete: function onComplete() {
             _this3.isRenderable = false;
@@ -3240,7 +3252,7 @@
 
         if (this.isLoaded && this.isRenderable) {
           this.planeMaterial.uniforms["displacement"].value = this.formatPosition(this.displacementPosition);
-          this.planeMaterial.uniforms["factor"].value = this.values.factor;
+          this.planeMaterial.uniforms["factor"].value = this.settings.factor; // this.planeMaterial.uniforms["scale"].value = this.settings.scale;
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -3316,9 +3328,9 @@
       _this.isLoaded = false;
       _this.isRenderable = false; // Positions
 
-      _this.displacementPosition = new THREE.Vector2(-0.5, -0.5);
-      _this.mouse = new THREE.Vector2(-0.5, -0.5);
-      _this.values = {
+      _this.displacementPosition = new THREE.Vector2(0, 0);
+      _this.mouse = new THREE.Vector2(0, 0);
+      _this.settings = {
         factor: 0,
         factorAim: _this.getData('factor'),
         scale: 1
@@ -3329,6 +3341,8 @@
     _createClass$1(_default, [{
       key: "init",
       value: function init() {
+        var _this2 = this;
+
         // Init webgl renderer
         this.renderer = new THREE.WebGLRenderer({
           canvas: this.$canvas[0],
@@ -3344,22 +3358,24 @@
 
         this.isRenderable = true;
         this.tl = new TimelineMax({
-          repeat: -1
+          repeat: -1,
+          onUpdate: function onUpdate() {
+            _this2.call('updateProgress', _this2.tl.progress(), 'Gui');
+          }
         });
-        this.values.factor = this.values.factorAim;
-        this.tl.to(this.displacementPosition, 2, {
-          x: 1.5,
-          y: 1.5
+        this.settings.factor = this.settings.factorAim;
+        this.tl.to(this.displacementPosition, 1, {
+          x: 1,
+          y: 1
         });
-        this.tl.to(this.displacementPosition, 2, {
-          x: -0.5,
-          y: -0.5
+        this.tl.to(this.displacementPosition, 1, {
+          x: 0,
+          y: 0
         });
         this.scrollBind = this.scroll.bind(this);
         document.addEventListener('scroll', this.scrollBind);
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
-        this.gui();
       }
     }, {
       key: "initScene",
@@ -3383,17 +3399,17 @@
     }, {
       key: "initShape",
       value: function initShape() {
-        var _this2 = this;
+        var _this3 = this;
 
         this.planeGeometry = new THREE.PlaneBufferGeometry(1, 1, 10, 10);
         var uvTransform = new THREE.Matrix3();
         uvTransform.setUvTransform(0, 0, 1, 1, 0, 0, 0);
         var loader = new THREE.TextureLoader();
         var displacementTexture = loader.load(this.displacementSrc, function (displacementTexture) {
-          var texture = loader.load(_this2.textureSrc, function (texture) {
+          var texture = loader.load(_this3.textureSrc, function (texture) {
             displacementTexture.minFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;
-            _this2.planeMaterial = new THREE.ShaderMaterial({
+            _this3.planeMaterial = new THREE.ShaderMaterial({
               vertexShader: vertexShader,
               fragmentShader: fragmentShader,
               uniforms: {
@@ -3401,7 +3417,7 @@
                   value: displacementTexture
                 },
                 "displacement": {
-                  value: _this2.displacementPosition
+                  value: _this3.displacementPosition
                 },
                 "texture": {
                   type: "t",
@@ -3418,18 +3434,18 @@
                 USE_MAP: true
               }
             });
-            _this2.plane = new THREE.Mesh(_this2.planeGeometry, _this2.planeMaterial);
-            _this2.BCR = _this2.el.getBoundingClientRect();
+            _this3.plane = new THREE.Mesh(_this3.planeGeometry, _this3.planeMaterial);
+            _this3.BCR = _this3.el.getBoundingClientRect();
 
-            _this2.updateSize();
+            _this3.updateSize();
 
-            _this2.scene.add(_this2.plane);
+            _this3.scene.add(_this3.plane);
 
-            _this2.isLoaded = true;
+            _this3.isLoaded = true;
 
-            _this2.el.classList.remove(CLASS$1.LOADING);
+            _this3.el.classList.remove(CLASS$1.LOADING);
 
-            _this2.render();
+            _this3.render();
           });
         });
       }
@@ -3461,19 +3477,19 @@
           x: (e.clientX - this.BCR.left) / this.BCR.width,
           y: (e.clientY - this.BCR.top) / this.BCR.height
         });
-        TweenMax.to(this.values, 0.6, {
-          factor: this.values.factorAim
+        TweenMax.to(this.settings, 0.6, {
+          factor: this.settings.factorAim
         });
       }
     }, {
       key: "mouseleave",
       value: function mouseleave(e) {
-        var _this3 = this;
+        var _this4 = this;
 
-        TweenMax.to(this.values, 0.6, {
+        TweenMax.to(this.settings, 0.6, {
           factor: 0,
           onComplete: function onComplete() {
-            _this3.isRenderable = false;
+            _this4.isRenderable = false;
           }
         });
       }
@@ -3494,15 +3510,15 @@
     }, {
       key: "render",
       value: function render() {
-        var _this4 = this;
+        var _this5 = this;
 
         this.raf = requestAnimationFrame(function () {
-          return _this4.render();
+          return _this5.render();
         });
 
         if (this.isLoaded && this.isRenderable) {
           this.planeMaterial.uniforms["displacement"].value = this.formatPosition(this.displacementPosition);
-          this.planeMaterial.uniforms["factor"].value = this.values.factor;
+          this.planeMaterial.uniforms["factor"].value = this.settings.factor;
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -3521,15 +3537,31 @@
         this.updateSize();
       }
     }, {
+      key: "updateFactor",
+      value: function updateFactor(factor) {
+        this.settings.factor = factor;
+      }
+    }, {
+      key: "updateProgress",
+      value: function updateProgress(progress) {
+        this.tl.progress(progress);
+      }
+    }, {
+      key: "updatePlay",
+      value: function updatePlay(value) {
+        if (value) {
+          this.tl.play();
+        } else {
+          this.tl.pause();
+        }
+      }
+    }, {
       key: "scroll",
       value: function scroll() {
         var newBCR = this.el.getBoundingClientRect();
         if (this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return;
         this.BCR = newBCR;
       }
-    }, {
-      key: "gui",
-      value: function gui() {}
     }, {
       key: "destroy",
       value: function destroy() {
@@ -3544,6 +3576,54 @@
     return _default;
   }(_default);
 
+  var _default$8 =
+  /*#__PURE__*/
+  function (_module) {
+    _inherits(_default, _module);
+
+    function _default(m) {
+      var _this;
+
+      _classCallCheck$1(this, _default);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(_default).call(this, m));
+      _this.settings = {
+        factor: 1,
+        progress: 0,
+        play: true
+      };
+      return _this;
+    }
+
+    _createClass$1(_default, [{
+      key: "init",
+      value: function init() {
+        var _this2 = this;
+
+        this.gui = new dat.GUI();
+        this.factorController = this.gui.add(this.settings, 'factor', -2, 2);
+        this.progressController = this.gui.add(this.settings, 'progress', 0, 1).step(0.01);
+        this.playController = this.gui.add(this.settings, 'play');
+        this.factorController.onChange(function (value) {
+          _this2.call('updateFactor', value, 'DistortionExample');
+        });
+        this.progressController.onChange(function (value) {
+          _this2.call('updateProgress', value, 'DistortionExample');
+        });
+        this.playController.onChange(function (value) {
+          _this2.call('updatePlay', value, 'DistortionExample');
+        });
+      }
+    }, {
+      key: "updateProgress",
+      value: function updateProgress(progress) {
+        this.progressController.setValue(progress);
+      }
+    }]);
+
+    return _default;
+  }(_default);
+
 
 
   var modules = /*#__PURE__*/Object.freeze({
@@ -3551,7 +3631,8 @@
     Load: _default$3,
     Scroll: _default$5,
     Distortion: _default$6,
-    DistortionExample: _default$7
+    DistortionExample: _default$7,
+    Gui: _default$8
   });
 
   var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};

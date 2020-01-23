@@ -37,13 +37,13 @@ npm i
 
 ## Examples
 ### Radial displacement texture
-![](www/assets/images/radial-displacement.jpg)
+![](www/assets/images/radial-displacement.jpg =200x200)
 
 ### Axis
-![](docs/axis.jpg)
+![](docs/axis.jpg =500)
 
 ### Displacement Position 0,0
-![](docs/positionExample.jpg)
+![](docs/positionExample.jpg = 500)
 
 
 ## Dependencies
