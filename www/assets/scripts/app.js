@@ -3023,7 +3023,7 @@
     return _default;
   }(_default);
 
-  var vertexShader = "\n    uniform sampler2D displacementTexture;\n    uniform float factor;\n    uniform vec2 displacement;\n    varying vec2 displacementUv;\n\n    #include <common>\n    #include <uv_pars_vertex>\n\n    void main() {\n        #include <uv_vertex>\n\n        displacementUv = uv + displacement;\n\n        vec3 newPosition = vec3(position.x, position.y , position.z + (texture2D(displacementTexture, displacementUv).r * factor));\n\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.);\n\n        // gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );;\n    }\n";
+  var vertexShader = "\n    uniform sampler2D displacementTexture;\n    uniform float factor;\n    uniform vec2 displacement;\n    varying vec2 displacementUv;\n    varying vec2 vUv;\n\n    #include <common>\n    #include <uv_pars_vertex>\n\n    void main() {\n        #include <uv_vertex>\n\n        displacementUv = uv + displacement;\n        vUv = uv;\n\n        vec3 newPosition = vec3(position.x, position.y , position.z + (texture2D(displacementTexture, displacementUv).r * factor));\n\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.);\n\n        // gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );;\n    }\n";
 
   var fragmentShader = "\n\n    uniform sampler2D texture;\n    varying vec2 vUv;\n\n    void main() {\n\n      gl_FragColor = texture2D(texture, vUv);\n      // gl_FragColor = vec4(1.0, 0, 0, 1.); // Works; Displays Flat Color\n\n    }\n";
 
@@ -3302,12 +3302,8 @@
       _this.gap = _this.getData('gap');
       _this.windowWidth = window.innerWidth;
       _this.windowHeight = window.innerHeight;
-      _this.$canvas = _this.$('canvas');
-      _this.events = {} // mousemove: 'mousemove',
-      // mouseenter: 'mouseenter',
-      // mouseleave: 'mouseleave'
-      // El and webgl plane BCR
-      ;
+      _this.$canvas = _this.$('canvas'); // El and webgl plane BCR
+
       _this.BCR = _this.el.getBoundingClientRect();
       _this.planeBCR = {
         width: 1,
@@ -3363,6 +3359,7 @@
         document.addEventListener('scroll', this.scrollBind);
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
+        this.gui();
       }
     }, {
       key: "initScene",
@@ -3530,6 +3527,9 @@
         if (this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return;
         this.BCR = newBCR;
       }
+    }, {
+      key: "gui",
+      value: function gui() {}
     }, {
       key: "destroy",
       value: function destroy() {

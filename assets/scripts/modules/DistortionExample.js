@@ -21,12 +21,6 @@ export default class extends module {
 
         this.$canvas = this.$('canvas');
 
-        this.events = {
-            // mousemove: 'mousemove',
-            // mouseenter: 'mouseenter',
-            // mouseleave: 'mouseleave'
-        }
-
         // El and webgl plane BCR
         this.BCR = this.el.getBoundingClientRect();
         this.planeBCR = {
@@ -83,6 +77,8 @@ export default class extends module {
 
         this.resizeBind = this.resize.bind(this);
         window.addEventListener('resize', this.resizeBind);
+
+        this.gui();
 
     }
 
@@ -239,6 +235,10 @@ export default class extends module {
         const newBCR = this.el.getBoundingClientRect()
         if(this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return
         this.BCR = newBCR;
+
+    }
+
+    gui() {
 
     }
 

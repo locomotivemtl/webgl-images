@@ -25,6 +25,16 @@ npm i
     }
 ```
 
+## Options
+
+| Attribute | Values | Description |
+| --------- | ------ | ----------- |
+| `data-distortion-texture` | url | Image you want to display |
+| `data-distortion-displacement` | url | Texture you want for a displacement (example: linear or radial gradient, The brighter the pixel, the more the z-axis is affected) |
+| `data-distortion-factor` | integer | Value to manage the intensity of the displacement |
+| `data-distortion-gap` | integer | % of the canvas width to have a gap. Prevent an `overflow: hidden` style and allow to see the effect on the borders|
+
+
 ## Examples
 ### Radial displacement texture
 ![](www/assets/images/radial-displacement.jpg)
@@ -35,17 +45,6 @@ npm i
 ### Displacement Position 0,0
 ![](docs/positionExample.jpg)
 
-
-
-
-## Options
-
-| Attribute | Values | Description |
-| --------- | ------ | ----------- |
-| `data-distortion-texture` | url | Image you want to display |
-| `data-distortion-displacement` | url | Texture you want for a displacement (example: linear or radial gradient, The brighter the pixel, the more the z-axis is affected) |
-| `data-distortion-factor` | integer | Value to manage the intensity of the displacement |
-| `data-distortion-gap` | integer | % of the canvas width to have a gap. Prevent an `overflow: hidden` style and allow to see the effect on the borders|
 
 ## Dependencies
 
