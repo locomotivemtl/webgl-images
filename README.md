@@ -27,7 +27,7 @@ npm i
 
 ## Examples
 ### Radial displacement texture
-![](www/assets/radial-displacement.jpg)
+![](www/assets/images/radial-displacement.jpg)
 
 ### Axis
 ![](docs/axis.jpg)
