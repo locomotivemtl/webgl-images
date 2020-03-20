@@ -17,8 +17,8 @@ npm i
     </div>
 ```
 
-### Javascript
-```scss
+### CSS
+```css
     .c-distortion {
         width: 500px; //Can be in %, vw etc..
         height: 390px;
