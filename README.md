@@ -37,13 +37,13 @@ npm i
 
 ## Examples
 ### Radial displacement texture
-![](www/assets/images/radial-displacement.jpg =200x200)
+![](https://raw.githubusercontent.com//locomotivemtl/webgl-images/master/www/assets/images/radial-displacement.jpg)
 
 ### Axis
-![](docs/axis.jpg =500)
+![](https://raw.githubusercontent.com//locomotivemtl/webgl-images/master/docs/axis.jpg)
 
 ### Displacement Position 0,0
-![](docs/positionExample.jpg = 500)
+![](https://raw.githubusercontent.com//locomotivemtl/webgl-images/master/docs/positionExample.jpg)
 
 
 ## Dependencies
