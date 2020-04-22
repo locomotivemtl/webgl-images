@@ -1,11 +1,16 @@
 
 ## Description
-Simple examples to implement easily images rendered with webgl. You just need to create a canvas, set its width and height with css, and the images will get the same dimensions
+Simple example to implement easily images rendered with webgl. You just need to create a canvas, set its width and height with css, and the images will get the same dimensions
 
 
 ## Installation
 ```sh
 npm i
+```
+
+## Run
+```sh
+gulp
 ```
 
 ## Usage
