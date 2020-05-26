@@ -94,9 +94,9 @@ export default class extends module {
         
         this.geometry = new Plane(this.gl,{width: 1, height: 1, widthSegments: 10, heightSegments: 10});
 
-        const texture = new Texture(this.gl);
+        const texture = new Texture(this.gl, {minFilter: this.gl.LINEAR});
 
-        const displacementTexture = new Texture(this.gl);
+        const displacementTexture = new Texture(this.gl, {minFilter: this.gl.LINEAR});
         const displacementImg = new Image();
         displacementImg.src = this.displacementSrc;
 

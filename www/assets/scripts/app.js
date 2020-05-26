@@ -7654,8 +7654,12 @@
           widthSegments: 10,
           heightSegments: 10
         });
-        var texture = new Texture(this.gl);
-        var displacementTexture = new Texture(this.gl);
+        var texture = new Texture(this.gl, {
+          minFilter: this.gl.LINEAR
+        });
+        var displacementTexture = new Texture(this.gl, {
+          minFilter: this.gl.LINEAR
+        });
         var displacementImg = new Image();
         displacementImg.src = this.displacementSrc;
 
@@ -7943,8 +7947,12 @@
           widthSegments: 10,
           heightSegments: 10
         });
-        var texture = new Texture(this.gl);
-        var displacementTexture = new Texture(this.gl);
+        var texture = new Texture(this.gl, {
+          minFilter: this.gl.LINEAR
+        });
+        var displacementTexture = new Texture(this.gl, {
+          minFilter: this.gl.LINEAR
+        });
         var displacementImg = new Image();
         displacementImg.src = this.displacementSrc;
 
