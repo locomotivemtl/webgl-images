@@ -53,6 +53,6 @@ gulp
 
 ## Dependencies
 
-[OGL](https://github.com/oframe/ogl/)
-[Locomotive Boilerplate](https://github.com/locomotivemtl/locomotive-boilerplate)
-[Locomotive Scroll](https://github.com/locomotivemtl/locomotive-scroll)
+- [OGL](https://github.com/oframe/ogl/)
+- [Locomotive Boilerplate](https://github.com/locomotivemtl/locomotive-boilerplate)
+- [Locomotive Scroll](https://github.com/locomotivemtl/locomotive-scroll)
