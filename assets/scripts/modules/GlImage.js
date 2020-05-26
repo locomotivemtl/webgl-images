@@ -20,6 +20,18 @@ export default class extends module {
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
 
+        this.events = {
+            mousemove: {
+                wrap:  'mousemove'
+            },
+            mouseenter: {
+                wrap:  'mouseenter'
+            },
+            mouseleave: {
+                wrap:  'mouseleave'
+            }
+        }
+
         // El and webgl plane BCR
         this.BCR = this.el.getBoundingClientRect();
         this.planeBCR = {
@@ -35,8 +47,8 @@ export default class extends module {
         this.isRenderable = false;
 
         // Positions
-        this.displacementPosition = new Vec2(0,0);
-        this.mouse = new Vec2(0,0);
+        this.displacementPosition = new Vec2(-0.5,-0.5);
+        this.mouse = new Vec2(-0.5,-0.5);
 
         this.settings = {
             factor: 0,
@@ -61,28 +73,11 @@ export default class extends module {
         this.initCamera();
         this.initShape();
 
-        this.isRenderable = true;
-        this.tl = new TimelineMax({
-            repeat: -1,
-            onUpdate: () => {
-                this.formatPosition({
-                    x: this.mouse.x,
-                    y: this.mouse.y,
-                    obj: this.displacementPosition
-                });
-                this.call('updateProgress',this.tl.progress(),'Gui');
-            }
-        });
-        this.settings.factor = this.settings.factorAim;
-        this.tl.to(this.mouse,1,{
-            x:1,
-            y:1,
-        });
-        this.tl.to(this.mouse,1,{
-            x:0,
-            y:0,
-        });
+        this.scrollBind = this.scroll.bind(this);
+        document.addEventListener('scroll', this.scrollBind);
 
+        this.resizeBind = this.resize.bind(this);
+        window.addEventListener('resize', this.resizeBind);
     }
 
     initScene() {
@@ -129,9 +124,8 @@ export default class extends module {
                 this.updateSize();
                 this.isLoaded = true;
                 this.el.classList.remove(CLASS.LOADING);
-
                 this.render();
-
+                
             };
         };
         
@@ -163,6 +157,52 @@ export default class extends module {
         this.gl.canvas.style.height = `${this.BCR.height}px`;
     }
 
+    mouseenter(e) {
+        this.isRenderable = true;
+
+        this.formatPosition({
+            x: (e.clientX - this.BCR.left) / this.BCR.width,
+            y: (e.clientY - this.BCR.top) / this.BCR.height,
+            obj: this.mouse
+        });
+
+        this.formatPosition({
+            x: (e.clientX - this.BCR.left) / this.BCR.width,
+            y: (e.clientY - this.BCR.top) / this.BCR.height,
+            obj: this.displacementPosition
+        });
+
+        gsap.to(this.settings,0.6,{
+            factor: this.settings.factorAim
+        });
+
+    }
+
+    mouseleave(e) {
+        gsap.to(this.settings,0.6,{
+            factor: 0,
+            onComplete: () => {
+                this.isRenderable = false;
+            }
+        });
+
+    }
+
+    mousemove(e) {
+        this.formatPosition({
+            x: (e.clientX - this.BCR.left) / this.BCR.width,
+            y: (e.clientY - this.BCR.top) / this.BCR.height,
+            obj: this.mouse
+        });
+
+        this.formatPosition({
+            x: (e.clientX - this.BCR.left) / this.BCR.width,
+            y: (e.clientY - this.BCR.top) / this.BCR.height,
+            obj: this.displacementPosition
+        });
+
+    }
+
     formatPosition(param) {
         param.obj.x = -(param.x) + 0.5;
         param.obj.y = param.y - 0.5
@@ -174,7 +214,6 @@ export default class extends module {
         if(this.isLoaded && this.isRenderable) {
 
             this.program.uniforms.displacement.value = this.displacementPosition;
-
             this.program.uniforms.factor.value = this.settings.factor;
         }
         
@@ -199,21 +238,6 @@ export default class extends module {
         if(this.BCR && this.BCR.top == newBCR.top && this.BCR.height == newBCR.height) return
         this.BCR = newBCR;
 
-    }
-
-    updateFactor(factor) {
-        this.settings.factor = factor;
-    }
-    updateProgress(progress) {
-        this.tl.progress(progress);
-    }
-
-    updatePlay(value) {
-        if(value) {
-            this.tl.play();
-        } else {
-            this.tl.pause();
-        }
     }
 
     destroy() {

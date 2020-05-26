@@ -1,5 +1,5 @@
 {
-  "url": "distortion.test",
+  "url": "webgl-images.test",
   "src": "./assets/",
   "dest": "./www/",
   "build": "./build/",

@@ -7,7 +7,6 @@ function concat() {
         .src([
             `${paths.scripts.vendors.src}*.js`,
             'node_modules/gsap/dist/gsap.min.js',
-            'node_modules/three/build/three.min.js',
             'node_modules/dat.gui/build/dat.gui.min.js'
         ])
         .pipe(gulpConcat(`${paths.scripts.vendors.main}.js`))

@@ -647,7 +647,7 @@ a {
   .c-button:focus, .c-button:hover {
     background-color: darkgray; }
 
-.c-distortion {
+.c-gl-image {
   display: inline-block;
   width: 100%;
   vertical-align: top;
@@ -656,21 +656,28 @@ a {
   position: relative;
   margin: 0;
   display: inline-block; }
-  .c-distortion::before {
+  .c-gl-image::before {
     content: "";
     display: block;
     padding-bottom: 78%; }
-  .c-distortion canvas {
+  @media (min-width: 1000px) {
+    .c-gl-image {
+      width: 40%; } }
+  .c-gl-image.is-loading {
+    background-color: rgba(0, 0, 0, 0.2); }
+
+.c-gl-image_wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0; }
+  .c-gl-image_wrap canvas {
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0; }
-  @media (min-width: 1000px) {
-    .c-distortion {
-      width: 40%; } }
-  .c-distortion.is-loading {
-    background-color: rgba(0, 0, 0, 0.2); }
 
 /* stylelint-disable */
 .u-2\:1::before {

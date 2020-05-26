@@ -1,4 +1,4 @@
-.c-distortion {
+.c-gl-image {
     // width: 500px;
     // height: 390px;
     @include o-layout-item;
@@ -12,6 +12,22 @@
         padding-bottom: 78%;
     }
 
+    @media (min-width: $from-medium) {
+        width: 40%;
+    }
+
+    &.is-loading {
+        background-color: rgba(0,0,0,0.2);
+    }
+}
+
+.c-gl-image_wrap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    
     canvas {
         position: absolute;
         top: 0;
@@ -20,11 +36,4 @@
         left: 0;
     }
 
-    @media (min-width: $from-medium) {
-        width: 40%;
-    }
-
-    &.is-loading {
-        background-color: rgba(0,0,0,0.2);
-    }
 }
