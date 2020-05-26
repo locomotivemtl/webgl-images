@@ -1,6 +1,6 @@
 
 ## Description
-Simple example to implement easily images rendered with webgl. You just need to create a wrap, set its width and height with css, and the images will get the same dimensions.
+Simple example to implement easily images rendered with WebGL. You just need to create a wrap, set its width and height with css, and the images will get the same dimensions.
 
 
 ## Installation
