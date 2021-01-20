@@ -6,7 +6,7 @@
     "author": "Locomotive <info@locomotive.ca>",
     "dependencies": {
         "dat.gui": "^0.7.6",
-        "gsap": "^3.2.6",
+        "gsap": "^3.6.0",
         "locomotive-scroll": "*",
         "modujs": "*",
         "modularload": "*",
