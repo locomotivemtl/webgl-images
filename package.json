@@ -25,6 +25,6 @@
         "@modularbp/gulp-svg": "^1.0.5",
         "@modularbp/gulp-watch": "^1.0.5",
         "gulp-concat": "*",
-        "mbp": "^1.1.3"
+        "mbp": "^1.3.0"
     }
 }
